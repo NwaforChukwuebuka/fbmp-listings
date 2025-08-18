@@ -64,6 +64,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (status !== undefined) updateData.status = status;
       updateData.updated_at = new Date().toISOString();
 
+      // First check if the listing exists
+      const { data: existingListing, error: checkError } = await supabase
+        .from('listings')
+        .select('id')
+        .eq('id', id)
+        .single();
+
+      if (checkError) {
+        if (checkError.code === 'PGRST116') {
+          return res.status(404).json({ error: 'Listing not found' });
+        }
+        console.error('Supabase error:', checkError);
+        return res.status(500).json({ 
+          error: 'Failed to check listing existence',
+          details: checkError.message 
+        });
+      }
+
+      // Now perform the update
       const { data, error } = await supabase
         .from('listings')
         .update(updateData)
