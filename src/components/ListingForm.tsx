@@ -50,7 +50,17 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
         .from("listings")
         .insert([{ link: url.trim() }]);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          toast({
+            title: "Duplicate Listing",
+            description: "This Facebook Marketplace URL has already been added",
+            variant: "destructive",
+          });
+          return;
+        }
+        throw error;
+      }
 
       toast({
         title: "Success!",

@@ -26,7 +26,8 @@ export const ListingsList = ({ refreshTrigger }: ListingsListProps) => {
       const { data, error } = await supabase
         .from("listings")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(5);
 
       if (error) throw error;
       setListings(data || []);
@@ -102,7 +103,7 @@ export const ListingsList = ({ refreshTrigger }: ListingsListProps) => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Your FBMP Listings ({listings.length})</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-6">Recent FBMP Listings ({listings.length}/5)</h2>
       {listings.map((listing) => (
         <Card key={listing.id} className="group hover:shadow-lg transition-all duration-300 bg-card/80 backdrop-blur-sm border-border/50 hover:border-primary/20">
           <CardContent className="p-6">

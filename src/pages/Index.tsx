@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ListingForm } from "@/components/ListingForm";
 import { ListingsList } from "@/components/ListingsList";
+import { DailyStats } from "@/components/DailyStats";
 import { Facebook } from "lucide-react";
 
 const Index = () => {
@@ -39,6 +40,13 @@ const Index = () => {
           <section className="relative">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl max-w-4xl mx-auto">
               <ListingForm onListingAdded={handleListingAdded} />
+            </div>
+          </section>
+
+          {/* Daily Stats Section */}
+          <section className="relative">
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-2xl max-w-2xl mx-auto">
+              <DailyStats refreshTrigger={refreshTrigger} />
             </div>
           </section>
 
