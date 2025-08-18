@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Calendar, Link as LinkIcon } from "lucide-react";
+import { ExternalLink, Calendar, Link as LinkIcon, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Listing {
@@ -20,6 +20,7 @@ interface ListingsListProps {
 export const ListingsList = ({ refreshTrigger }: ListingsListProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [todayCount, setTodayCount] = useState(0);
 
   const fetchListings = async () => {
     try {
@@ -38,14 +39,32 @@ export const ListingsList = ({ refreshTrigger }: ListingsListProps) => {
     }
   };
 
+  const fetchTodayStats = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      
+      const { data, error } = await supabase
+        .from("listings")
+        .select("id", { count: "exact" })
+        .gte("created_at", `${today}T00:00:00.000Z`)
+        .lt("created_at", `${today}T23:59:59.999Z`);
+
+      if (error) throw error;
+      setTodayCount(data?.length || 0);
+    } catch (error) {
+      console.error("Error fetching daily stats:", error);
+    }
+  };
+
   useEffect(() => {
     fetchListings();
+    fetchTodayStats();
   }, [refreshTrigger]);
 
   const getStatusBadge = (status: number) => {
     switch (status) {
       case 0:
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Pending</Badge>;
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200"></Badge>;
       case 1:
         return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Active</Badge>;
       case 2:
@@ -103,15 +122,24 @@ export const ListingsList = ({ refreshTrigger }: ListingsListProps) => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Recent FBMP Listings ({listings.length}/5)</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Recent FBMP Listings ({listings.length}/5)</h2>
+        <div className="flex items-center gap-3 text-right">
+          <div className="text-2xl font-bold text-white">{todayCount}</div>
+          <div className="flex flex-col">
+            <span className="text-sm text-white">today</span>
+            <span className="text-xs text-white">listings</span>
+          </div>
+          {todayCount > 0 && (
+            <TrendingUp className="h-4 w-4 text-green-500" />
+          )}
+        </div>
+      </div>
       {listings.map((listing) => (
         <Card key={listing.id} className="group hover:shadow-lg transition-all duration-300 bg-card/80 backdrop-blur-sm border-border/50 hover:border-primary/20">
           <CardContent className="p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
-                <h3 className="font-semibold text-lg text-foreground mb-2 capitalize">
-                  {extractListingTitle(listing.link)}
-                </h3>
                 <p className="text-muted-foreground text-sm mb-3 break-all line-clamp-2">
                   {listing.link}
                 </p>
