@@ -3,17 +3,6 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "installCommand": "npm install --platform=linux --arch=x64",
-  "functions": {
-    "dist/api/listings/[id].js": {
-      "maxDuration": 10
-    },
-    "dist/api/listings/index.js": {
-      "maxDuration": 10
-    },
-    "dist/api/listings/status/[status].js": {
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
