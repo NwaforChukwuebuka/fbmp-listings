@@ -6,16 +6,13 @@
   "engines": {
     "node": ">=18.17.0"
   },
-  "resolutions": {
-    "@rollup/rollup-linux-x64-gnu": "0.0.0"
-  },
   "scripts": {
     "dev": "vite",
     "dev:api": "node server.js",
     "dev:full": "concurrently \"npm run dev:api\" \"npm run dev\"",
     "build": "tsc && vite build",
     "build:dev": "vite build --mode development",
-    "vercel-build": "tsc && vite build",
+    "vercel-build": "npm install --omit=optional && tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
