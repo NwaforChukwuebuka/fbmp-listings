@@ -82,19 +82,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      // Now perform the update
-      const { data, error } = await supabase
+      // Perform the update without .select().single()
+      const { error: updateError } = await supabase
         .from('listings')
         .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+        .eq('id', id);
 
-      if (error) {
-        console.error('Supabase error:', error);
+      if (updateError) {
+        console.error('Supabase update error:', updateError);
         return res.status(500).json({ 
           error: 'Failed to update listing',
-          details: error.message 
+          details: updateError.message 
+        });
+      }
+
+      // Fetch the updated listing separately
+      const { data, error: fetchError } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) {
+        console.error('Supabase fetch error:', fetchError);
+        return res.status(500).json({ 
+          error: 'Failed to fetch updated listing',
+          details: fetchError.message 
         });
       }
 
