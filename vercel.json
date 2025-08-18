@@ -4,13 +4,13 @@
   "outputDirectory": "dist",
   "installCommand": "npm install --platform=linux --arch=x64",
   "functions": {
-    "api/listings/[id].ts": {
+    "dist/api/listings/[id].js": {
       "maxDuration": 10
     },
-    "api/listings/index.ts": {
+    "dist/api/listings/index.js": {
       "maxDuration": 10
     },
-    "api/listings/status/[status].ts": {
+    "dist/api/listings/status/[status].js": {
       "maxDuration": 10
     }
   },
