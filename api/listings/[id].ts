@@ -59,10 +59,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Update listing
       const { link, status } = req.body;
       
+      console.log('PUT request body:', req.body);
+      console.log('Status from body:', status, 'Type:', typeof status);
+      
       const updateData = {} as any;
       if (link !== undefined) updateData.link = link;
-      if (status !== undefined) updateData.status = status;
+      if (status !== undefined) {
+        // Ensure status is converted to a number
+        const statusNumber = parseInt(status, 10);
+        if (isNaN(statusNumber)) {
+          return res.status(400).json({ error: 'Status must be a valid number' });
+        }
+        updateData.status = statusNumber;
+        console.log('Converted status to:', statusNumber);
+      }
       updateData.updated_at = new Date().toISOString();
+      
+      console.log('Update data:', updateData);
 
       // First check if the listing exists
       const { data: existingListing, error: checkError } = await supabase
@@ -96,6 +109,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
+      console.log('Update successful, fetching updated listing...');
+
       // Fetch the updated listing separately
       const { data, error: fetchError } = await supabase
         .from('listings')
@@ -110,6 +125,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           details: fetchError.message 
         });
       }
+
+      console.log('Fetched updated listing:', data);
 
       return res.status(200).json({
         success: true,
