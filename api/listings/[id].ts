@@ -10,7 +10,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req, res) {
   // Enable CORS for external access
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS');
@@ -58,7 +58,7 @@ export default async function handler(req: any, res: any) {
       // Update listing
       const { link, status } = req.body;
       
-      const updateData: any = {};
+      const updateData = {} as any;
       if (link !== undefined) updateData.link = link;
       if (status !== undefined) updateData.status = status;
       updateData.updated_at = new Date().toISOString();
