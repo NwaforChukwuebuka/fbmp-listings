@@ -16,4 +16,18 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Ensure consistent builds across platforms
+    target: "es2020",
+    // Disable source maps in production for smaller bundle
+    sourcemap: mode === "development",
+    // Ensure proper chunking
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
+  // Ensure Vite works well in CI/CD environments
+  clearScreen: false,
 }));
