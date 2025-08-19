@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Facebook } from "lucide-react";
+import { Plus, Facebook, Package } from "lucide-react";
 
 interface ListingFormProps {
   onListingAdded: () => void;
@@ -11,6 +11,7 @@ interface ListingFormProps {
 
 export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
   const [url, setUrl] = useState("");
+  const [product, setProduct] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -71,7 +72,10 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
     try {
       const { error } = await supabase
         .from("listings")
-        .insert([{ link: url.trim() }]);
+        .insert([{ 
+          link: url.trim(),
+          product: product.trim() || null
+        }]);
 
       if (error) {
         if (error.code === '23505') { // Unique constraint violation
@@ -91,6 +95,7 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
       });
 
       setUrl("");
+      setProduct("");
       onListingAdded();
     } catch (error) {
       console.error("Error adding listing:", error);
@@ -107,6 +112,19 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Package className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <Input
+            type="text"
+            placeholder="Enter product name or description..."
+            value={product}
+            onChange={(e) => setProduct(e.target.value)}
+            className="pl-12 h-14 text-lg bg-input/90 backdrop-blur-sm border-border/50 rounded-xl shadow-soft focus:shadow-glow transition-all duration-300"
+          />
+        </div>
+
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Facebook className="h-5 w-5 text-muted-foreground" />

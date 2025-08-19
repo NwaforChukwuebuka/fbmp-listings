@@ -11,6 +11,7 @@ interface Listing {
   status: number;
   created_at: string;
   updated_at: string;
+  product: string | null;
 }
 
 interface ListingsListProps {
@@ -140,6 +141,11 @@ export const ListingsList = ({ refreshTrigger }: ListingsListProps) => {
           <CardContent className="p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
+                {listing.product && (
+                  <h3 className="font-semibold text-foreground mb-2 line-clamp-2">
+                    {listing.product}
+                  </h3>
+                )}
                 <p className="text-muted-foreground text-sm mb-3 break-all line-clamp-2">
                   {listing.link}
                 </p>
