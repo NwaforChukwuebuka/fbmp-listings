@@ -25,7 +25,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'GET') {
-      // Get all listings
+      const { oldest } = req.query;
+      
+      if (oldest === 'true') {
+        // Get the oldest listing with status 0
+        const { data, error } = await supabase
+          .from('listings')
+          .select('*')
+          .eq('status', 0)
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (error) {
+          if (error.code === 'PGRST116') {
+            return res.status(404).json({ error: 'No unvisited listings found' });
+          }
+          console.error('Supabase error:', error);
+          return res.status(500).json({ 
+            error: 'Failed to fetch oldest unvisited listing',
+            details: error.message 
+          });
+        }
+
+        return res.status(200).json({
+          success: true,
+          data
+        });
+      }
+
+      // Get all listings (existing functionality)
       const { data, error } = await supabase
         .from('listings')
         .select('*')
