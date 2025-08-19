@@ -1,19 +1,16 @@
 # FBMP Listings API Documentation
 
-This API provides access to Facebook Marketplace listings data. All endpoints support CORS and return JSON responses.
+A comprehensive REST API for managing Facebook Marketplace listings. This API provides full CRUD operations for listings with real-time database integration via Supabase.
 
 ## Base URL
 
-When deployed to Vercel, your API will be available at:
-```
-https://your-app-name.vercel.app/api
-```
+**Production API:** `https://fbmp-listings.vercel.app/api`
 
 ## Authentication
 
-Currently, this API is public and doesn't require authentication. In production, consider adding API key authentication.
+Currently, this API is public and doesn't require authentication. In production, consider implementing API key authentication or JWT tokens for security.
 
-## Endpoints
+## API Endpoints
 
 ### 1. Get All Listings
 
@@ -27,15 +24,20 @@ Returns all listings ordered by creation date (newest first).
   "success": true,
   "data": [
     {
-      "id": "115dddb4-d2ff-4f3c-81fd-098079933ae5",
-      "link": "https://www.facebook.com/marketplace/item/123456789012345/",
-      "status": 0,
-      "created_at": "2025-08-18T14:30:32.038Z",
-      "updated_at": "2025-08-18T14:30:32.038Z"
+      "id": "dde191dc-d939-4caa-9c08-e55e762925ad",
+      "link": "https://www.facebook.com/marketplace/item/987654321098765/?ref=feed_rhcds",
+      "status": 1,
+      "created_at": "2025-08-18T17:27:34.640028+00:00",
+      "updated_at": "2025-08-18T17:27:34.640028+00:00"
     }
   ],
   "count": 1
 }
+```
+
+**cURL Example:**
+```bash
+curl https://fbmp-listings.vercel.app/api/listings
 ```
 
 ### 2. Get Listing by ID
@@ -52,11 +54,11 @@ Returns a specific listing by its UUID.
 {
   "success": true,
   "data": {
-    "id": "115dddb4-d2ff-4f3c-81fd-098079933ae5",
-    "link": "https://www.facebook.com/marketplace/item/123456789012345/",
-    "status": 0,
-    "created_at": "2025-08-18T14:30:32.038Z",
-    "updated_at": "2025-08-18T14:30:32.038Z"
+    "id": "dde191dc-d939-4caa-9c08-e55e762925ad",
+    "link": "https://www.facebook.com/marketplace/item/987654321098765/?ref=feed_rhcds",
+    "status": 1,
+    "created_at": "2025-08-18T17:27:34.640028+00:00",
+    "updated_at": "2025-08-18T17:27:34.640028+00:00"
   }
 }
 ```
@@ -68,6 +70,11 @@ Returns a specific listing by its UUID.
 }
 ```
 
+**cURL Example:**
+```bash
+curl https://fbmp-listings.vercel.app/api/listings/dde191dc-d939-4caa-9c08-e55e762925ad
+```
+
 ### 3. Get Listings by Status
 
 **GET** `/api/listings/status/{status}`
@@ -75,7 +82,7 @@ Returns a specific listing by its UUID.
 Returns all listings with a specific status.
 
 **Parameters:**
-- `status` (number, required): The status number to filter by
+- `status` (number, required): The status number to filter by (0, 1, 2, etc.)
 
 **Response:**
 ```json
@@ -83,23 +90,28 @@ Returns all listings with a specific status.
   "success": true,
   "data": [
     {
-      "id": "115dddb4-d2ff-4f3c-81fd-098079933ae5",
-      "link": "https://www.facebook.com/marketplace/item/123456789012345/",
-      "status": 0,
-      "created_at": "2025-08-18T14:30:32.038Z",
-      "updated_at": "2025-08-18T14:30:32.038Z"
+      "id": "dde191dc-d939-4caa-9c08-e55e762925ad",
+      "link": "https://www.facebook.com/marketplace/item/987654321098765/?ref=feed_rhcds",
+      "status": 1,
+      "created_at": "2025-08-18T17:27:34.640028+00:00",
+      "updated_at": "2025-08-18T17:27:34.640028+00:00"
     }
   ],
   "count": 1,
-  "status": 0
+  "status": 1
 }
+```
+
+**cURL Example:**
+```bash
+curl https://fbmp-listings.vercel.app/api/listings/status/1
 ```
 
 ### 4. Update Listing
 
 **PUT** `/api/listings/{id}`
 
-Updates a specific listing.
+Updates a specific listing. You can update the `link`, `status`, or both fields.
 
 **Parameters:**
 - `id` (string, required): The listing UUID
@@ -107,7 +119,6 @@ Updates a specific listing.
 **Request Body:**
 ```json
 {
-  "link": "https://www.facebook.com/marketplace/item/new-link/",
   "status": 1
 }
 ```
@@ -117,13 +128,20 @@ Updates a specific listing.
 {
   "success": true,
   "data": {
-    "id": "115dddb4-d2ff-4f3c-81fd-098079933ae5",
-    "link": "https://www.facebook.com/marketplace/item/new-link/",
+    "id": "dde191dc-d939-4caa-9c08-e55e762925ad",
+    "link": "https://www.facebook.com/marketplace/item/987654321098765/?ref=feed_rhcds",
     "status": 1,
-    "created_at": "2025-08-18T14:30:32.038Z",
-    "updated_at": "2025-08-18T15:45:12.123Z"
+    "created_at": "2025-08-18T17:27:34.640028+00:00",
+    "updated_at": "2025-08-18T18:45:12.123Z"
   }
 }
+```
+
+**cURL Example:**
+```bash
+curl -X PUT "https://fbmp-listings.vercel.app/api/listings/dde191dc-d939-4caa-9c08-e55e762925ad" \
+  -H "Content-Type: application/json" \
+  -d '{"status": 1}'
 ```
 
 ### 5. Delete Listing
@@ -143,23 +161,33 @@ Deletes a specific listing.
 }
 ```
 
+**cURL Example:**
+```bash
+curl -X DELETE https://fbmp-listings.vercel.app/api/listings/dde191dc-d939-4caa-9c08-e55e762925ad
+```
+
 ## Data Model
 
 ### Listing Object
 
 ```typescript
 interface Listing {
-  id: string;           // UUID
-  link: string;         // Facebook Marketplace URL
-  status: number;       // Status code (0, 1, 2, etc.)
-  created_at: string;   // ISO 8601 timestamp
-  updated_at: string;   // ISO 8601 timestamp
+  id: string;           // UUID (auto-generated)
+  link: string;         // Facebook Marketplace URL (unique)
+  status: number;       // Status code (0: New, 1: Active, 2: Inactive)
+  created_at: string;   // ISO 8601 timestamp (auto-generated)
+  updated_at: string;   // ISO 8601 timestamp (auto-updated)
 }
 ```
 
-## Status Codes
+### Status Codes
 
-The API uses standard HTTP status codes:
+The API uses the following status values:
+- `0` - New/Unprocessed
+- `1` - Active/Processed
+- `2` - Inactive/Archived
+
+## HTTP Status Codes
 
 - `200` - Success
 - `400` - Bad Request (invalid parameters)
@@ -185,76 +213,166 @@ All endpoints support CORS with the following headers:
 - `Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS`
 - `Access-Control-Allow-Headers: Content-Type, Authorization`
 
-## Rate Limiting
+## Database Schema
 
-Currently, no rate limiting is implemented. Consider implementing rate limiting for production use.
+The API uses a PostgreSQL database with the following structure:
+
+```sql
+CREATE TABLE public.listings (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  link TEXT NOT NULL UNIQUE,
+  status INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
+```
+
+**Indexes:**
+- `idx_listings_created_at` - For date-based sorting
+- `idx_listings_status` - For status-based filtering
+- `idx_listings_created_at_date` - For daily statistics
 
 ## Example Usage
 
 ### JavaScript/Node.js
+
 ```javascript
+const API_BASE = 'https://fbmp-listings.vercel.app/api';
+
 // Get all listings
-const response = await fetch('https://your-app.vercel.app/api/listings');
-const data = await response.json();
-console.log(data.data);
+const getAllListings = async () => {
+  const response = await fetch(`${API_BASE}/listings`);
+  const data = await response.json();
+  return data.data;
+};
 
-// Get listings with status 0
-const statusResponse = await fetch('https://your-app.vercel.app/api/listings/status/0');
-const statusData = await statusResponse.json();
-console.log(statusData.data);
+// Get listings with status 1 (Active)
+const getActiveListings = async () => {
+  const response = await fetch(`${API_BASE}/listings/status/1`);
+  const data = await response.json();
+  return data.data;
+};
 
-// Update a listing
-const updateResponse = await fetch('https://your-app.vercel.app/api/listings/115dddb4-d2ff-4f3c-81fd-098079933ae5', {
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    status: 1
-  })
-});
-const updateData = await updateResponse.json();
+// Update a listing status
+const updateListingStatus = async (id, status) => {
+  const response = await fetch(`${API_BASE}/listings/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status })
+  });
+  const data = await response.json();
+  return data.data;
+};
+
+// Delete a listing
+const deleteListing = async (id) => {
+  const response = await fetch(`${API_BASE}/listings/${id}`, {
+    method: 'DELETE'
+  });
+  const data = await response.json();
+  return data;
+};
 ```
 
 ### Python
+
 ```python
 import requests
 
-# Get all listings
-response = requests.get('https://your-app.vercel.app/api/listings')
-data = response.json()
-print(data['data'])
+API_BASE = 'https://fbmp-listings.vercel.app/api'
 
-# Get listings with status 0
-status_response = requests.get('https://your-app.vercel.app/api/listings/status/0')
-status_data = status_response.json()
-print(status_data['data'])
+# Get all listings
+def get_all_listings():
+    response = requests.get(f'{API_BASE}/listings')
+    return response.json()['data']
+
+# Get listings by status
+def get_listings_by_status(status):
+    response = requests.get(f'{API_BASE}/listings/status/{status}')
+    return response.json()['data']
+
+# Update listing
+def update_listing(listing_id, **kwargs):
+    response = requests.put(
+        f'{API_BASE}/listings/{listing_id}',
+        json=kwargs
+    )
+    return response.json()['data']
+
+# Delete listing
+def delete_listing(listing_id):
+    response = requests.delete(f'{API_BASE}/listings/{listing_id}')
+    return response.json()
 ```
 
-### cURL
+### cURL Examples
+
 ```bash
 # Get all listings
-curl https://your-app.vercel.app/api/listings
+curl https://fbmp-listings.vercel.app/api/listings
 
 # Get listings with status 0
-curl https://your-app.vercel.app/api/listings/status/0
+curl https://fbmp-listings.vercel.app/api/listings/status/0
 
-# Update a listing
-curl -X PUT https://your-app.vercel.app/api/listings/115dddb4-d2ff-4f3c-81fd-098079933ae5 \
+# Update a listing status
+curl -X PUT "https://fbmp-listings.vercel.app/api/listings/dde191dc-d939-4caa-9c08-e55e762925ad" \
   -H "Content-Type: application/json" \
   -d '{"status": 1}'
+
+# Delete a listing
+curl -X DELETE https://fbmp-listings.vercel.app/api/listings/dde191dc-d939-4caa-9c08-e55e762925ad
 ```
 
-## Deployment Notes
+## Frontend Integration
 
-1. Set environment variables in Vercel:
-   - `VITE_SUPABASE_URL` or `SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY` or `SUPABASE_ANON_KEY`
+The frontend application integrates directly with Supabase for creating new listings, while using the REST API for all other operations. This design allows for:
 
-2. The API will be automatically deployed when you push to your main branch
+- Real-time updates via Supabase subscriptions
+- RESTful API access for external integrations
+- Optimized performance for read operations
 
-3. Vercel will create serverless functions for each API endpoint
+## Rate Limiting
 
-## Support
+Currently, no rate limiting is implemented. For production use, consider implementing:
+- Rate limiting per IP address
+- API key-based quotas
+- Request throttling for heavy users
 
-For API support or questions, please refer to the main project documentation or create an issue in the repository.
+## Monitoring & Logging
+
+The API includes comprehensive logging:
+- All API requests are logged
+- Error details are captured and returned
+- Database query performance is monitored
+
+## Deployment
+
+The API is deployed on Vercel with:
+- Automatic deployments from the main branch
+- Global CDN distribution
+- Serverless function execution
+- Environment variable management
+
+## Environment Variables
+
+Required environment variables:
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_ANON_KEY` - Your Supabase anonymous key
+
+## Support & Issues
+
+For API support or to report issues:
+1. Check the project repository for known issues
+2. Create a new issue with detailed error information
+3. Include request/response examples when possible
+
+## Future Enhancements
+
+Planned features:
+- POST endpoint for creating listings via API
+- Bulk operations (batch updates, bulk delete)
+- Advanced filtering and search
+- Pagination for large datasets
+- Webhook notifications for status changes

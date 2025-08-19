@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "fbmp-listings-api",
+		"name": "FBMP Listings API",
+		"description": "A comprehensive collection for testing the FBMP Listings API endpoints. This API provides full CRUD operations for Facebook Marketplace listings.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "fbmp-listings"
+	},
+	"item": [
+		{
+			"name": "Get All Listings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fbmp-listings.vercel.app/api/listings",
+					"protocol": "https",
+					"host": [
+						"fbmp-listings",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"api",
+						"listings"
+					]
+				},
+				"description": "Retrieve all listings ordered by creation date (newest first)"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Listing by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fbmp-listings.vercel.app/api/listings/{{listing_id}}",
+					"protocol": "https",
+					"host": [
+						"fbmp-listings",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"api",
+						"listings",
+						"{{listing_id}}"
+					]
+				},
+				"description": "Retrieve a specific listing by its UUID"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Listings by Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fbmp-listings.vercel.app/api/listings/status/{{status}}",
+					"protocol": "https",
+					"host": [
+						"fbmp-listings",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"api",
+						"listings",
+						"status",
+						"{{status}}"
+					]
+				},
+				"description": "Retrieve all listings with a specific status (0: New, 1: Active, 2: Inactive)"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Listing",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://fbmp-listings.vercel.app/api/listings/{{listing_id}}",
+					"protocol": "https",
+					"host": [
+						"fbmp-listings",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"api",
+						"listings",
+						"{{listing_id}}"
+					]
+				},
+				"description": "Update a specific listing. You can update the link, status, or both fields."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Listing",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://fbmp-listings.vercel.app/api/listings/{{listing_id}}",
+					"protocol": "https",
+					"host": [
+						"fbmp-listings",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"api",
+						"listings",
+						"{{listing_id}}"
+					]
+				},
+				"description": "Delete a specific listing by its UUID"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set default values for variables if not already set",
+					"if (!pm.collectionVariables.get('listing_id')) {",
+					"    pm.collectionVariables.set('listing_id', 'dde191dc-d939-4caa-9c08-e55e762925ad');",
+					"}",
+					"if (!pm.collectionVariables.get('status')) {",
+					"    pm.collectionVariables.set('status', '0');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "listing_id",
+			"value": "dde191dc-d939-4caa-9c08-e55e762925ad",
+			"type": "string",
+			"description": "Replace with an actual listing ID from your database"
+		},
+		{
+			"key": "status",
+			"value": "0",
+			"type": "string",
+			"description": "Status values: 0 (New), 1 (Active), 2 (Inactive)"
+		}
+	]
+}

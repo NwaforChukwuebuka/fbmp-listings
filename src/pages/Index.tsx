@@ -29,7 +29,7 @@ const Index = () => {
             <h1 className="text-5xl font-bold text-white">FBMP Listings</h1>
           </div>
           <p className="text-xl text-white/80 max-w-2xl mx-auto px-4">
-            Organize and manage your Facebook Marketplace listings in one beautiful place
+            Organize and manage your Facebook URLs and listings in one beautiful place
           </p>
         </header>
 

@@ -15,11 +15,34 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
   const { toast } = useToast();
 
   const isValidFacebookUrl = (url: string) => {
-    const facebookPatterns = [
-      /^https?:\/\/(www\.)?facebook\.com\/marketplace/,
-      /^https?:\/\/(www\.)?facebook\.com\/.*\/marketplace/,
-    ];
-    return facebookPatterns.some(pattern => pattern.test(url));
+    try {
+      const urlObj = new URL(url);
+      
+      // Check if it's a Facebook domain
+      const facebookDomains = [
+        'facebook.com',
+        'www.facebook.com',
+        'm.facebook.com',
+        'fb.com',
+        'www.fb.com'
+      ];
+      
+      const isFacebookDomain = facebookDomains.some(domain => 
+        urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain)
+      );
+      
+      if (!isFacebookDomain) {
+        return false;
+      }
+      
+      // Accept any Facebook URL - they could be marketplace listings, shares, posts, etc.
+      // Facebook's URL structure is complex and can include marketplace listings in various formats
+      return true;
+      
+    } catch (error) {
+      // Invalid URL format
+      return false;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +51,7 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
     if (!url.trim()) {
       toast({
         title: "URL Required",
-        description: "Please paste a Facebook Marketplace URL",
+        description: "Please paste a Facebook URL",
         variant: "destructive",
       });
       return;
@@ -37,7 +60,7 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
     if (!isValidFacebookUrl(url)) {
       toast({
         title: "Invalid URL",
-        description: "Please provide a valid Facebook Marketplace URL",
+        description: "Please provide a valid Facebook URL",
         variant: "destructive",
       });
       return;
@@ -53,8 +76,8 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
       if (error) {
         if (error.code === '23505') { // Unique constraint violation
           toast({
-            title: "Duplicate Listing",
-            description: "This Facebook Marketplace URL has already been added",
+            title: "Duplicate URL",
+            description: "This Facebook URL has already been added",
             variant: "destructive",
           });
           return;
@@ -64,7 +87,7 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
 
       toast({
         title: "Success!",
-        description: "Facebook Marketplace listing added successfully",
+        description: "Facebook URL added successfully",
       });
 
       setUrl("");
@@ -90,7 +113,7 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
           </div>
           <Input
             type="url"
-            placeholder="Paste your Facebook Marketplace listing URL here..."
+            placeholder="Paste your Facebook URL here..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             className="pl-12 h-14 text-lg bg-input/90 backdrop-blur-sm border-border/50 rounded-xl shadow-soft focus:shadow-glow transition-all duration-300"
@@ -110,7 +133,7 @@ export const ListingForm = ({ onListingAdded }: ListingFormProps) => {
           ) : (
             <div className="flex items-center gap-2">
               <Plus className="h-5 w-5" />
-              Add FBMP Listing
+              Add Facebook URL
             </div>
           )}
         </Button>
